@@ -76,18 +76,88 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 			font-size: 12px;
 
 		}
-.dropdown .items .item:hover {
-	background: #1E5799;
-	color: #FFF;
-}
+		.dropdown .items .item:hover {
+			background: #1E5799;
+			color: #FFF;
+		}
+		.slider {
+			position: relative;
+			max-width: 550px;
+			height: 25px;
+			margin: 20px 0;
+			padding-top: 22px;
+		}
+		.slider .background {
+			height: 2px;
+			background: #CCC;
+			display: block;
+		}
+		.slider .handle {
+			width: 25px;
+			height: 25px;
+			background: #333;
+			border-radius: 25px;
+			position: absolute;
+			top: 50%;
+			left: 6px;
+			margin-top: -12.5px;
+			cursor: pointer;
+		}
+		.slider .output {
+			position: absolute;
+			right: 0;
+			bottom: -15px;
+		}
 	</style>
 </head>
 <body>
 
 	<div id="target"></div>
+
+	<div class="slider">
+		<div class="output"></div>
+		<div class="handle"></div>
+		<div class="background"></div>
+	</div>
+
 <!--sådan laver du en note i HTML bindestreg = dash!! skråstreg = slash-->
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript">
+	var movingSlider;
+
+	$('.slider').on('mousedown',function(e){
+		var slider = $(e.currentTarget);
+
+		moveSlider(slider, e.clientX);
+		movingSlider = slider;
+	});
+	$(document).on('mousemove', function (e) {
+		e.preventDefault();
+
+		if (movingSlider)
+			moveSlider(movingSlider, e.clientX);
+	});
+	$(document).on('mouseup', function () {
+		movingSlider = null;
+	});
+
+	function moveSlider(slider, x) {
+		var width = slider.width(),
+			handle = slider.find('.handle'),
+			posX = x - (handle.width() / 2) - 6,
+			limit = width - (6 + handle.width());
+		
+		posX = (posX <= 6) ? 6 : posX;
+		posX = (posX >= limit) ? limit : posX;
+
+		console.log(parseInt(posX - 6, 10));
+
+		handle.css({ left: posX });
+
+		slider.find('.output').text(posX);
+	}
+
+
 	$.fn.createDropdown = function (arr) {
 		function createEntries (arr) {
 			var tmpl = '<div class="item">[title]</div>',
